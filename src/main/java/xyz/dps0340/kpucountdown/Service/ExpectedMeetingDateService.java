@@ -25,7 +25,13 @@ public class ExpectedMeetingDateService {
             ExpectedMeetingDateDTO calculated = calculateExpectedMeetingDate();
             ExpectedMeetingDateEntity entity = new ExpectedMeetingDateEntity();
             entity.setDate(calculated.getDate());
-            repository.save(entity);
+
+            // Scheduler와의 Race Condition 방지
+            length = (int) repository.count();
+            if(length == 0) {
+                repository.save(entity);
+            }
+
             dates.add(calculated);
         } else if(length > 1) {
             throw new IllegalStateException(
