@@ -14,26 +14,26 @@ import java.util.List;
 @Component
 public class VaccineStatisticScheduler {
     @Autowired
-    private VaccineStatisticService vaccineStatisticService;
+    private VaccineStatisticService service;
     @Autowired
-    private VaccineStatisticRepository vaccineStatisticRepository;
+    private VaccineStatisticRepository repository;
 
     @Scheduled(cron = "0 0 11 * * 0")
     @EventListener(ApplicationReadyEvent.class)
     public void crawlTodayStatistic() {
-        VaccineStatisticEntity vaccineStatisticEntity = vaccineStatisticService.crawlTodayStatFromServer();
-        if(vaccineStatisticRepository.findByDate(vaccineStatisticEntity.getDate()).isPresent()) {
+        VaccineStatisticEntity entity = service.crawlTodayStatFromServer();
+        if(repository.findByDate(entity.getDate()).isPresent()) {
             return;
         }
-        vaccineStatisticRepository.save(vaccineStatisticEntity);
+        repository.save(entity);
     }
 
     @EventListener(ApplicationReadyEvent.class)
     public void crawlHistoryStatistic() {
-        List<VaccineStatisticEntity> vaccineStatisticEntities = vaccineStatisticService.crawlStatsFromServer();
-        vaccineStatisticEntities
-                .stream()
-                .filter(entity -> vaccineStatisticRepository.findByDate(entity.getDate()).isEmpty())
-                .forEach(vaccineStatisticRepository::save);
+        List<VaccineStatisticEntity> entities = service.crawlStatsFromServer();
+        entities
+            .stream()
+            .filter(entity -> repository.findByDate(entity.getDate()).isEmpty())
+            .forEach(repository::save);
     }
 }
