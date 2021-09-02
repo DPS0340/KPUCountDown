@@ -26,24 +26,23 @@ import java.time.format.DateTimeFormatterBuilder;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 @Service
 public class VaccineStatisticService {
     @Autowired
-    VaccineStatisticRepository vaccineStatisticRepository;
+    private VaccineStatisticRepository repository;
 
 
     public VaccineStatisticDTO getTodayStat() {
         LocalDateTime today = LocalDate.now().atTime(0, 0, 0, 0);
-        VaccineStatisticEntity vaccineStatisticEntity = vaccineStatisticRepository.findByDate(today).get();
+        VaccineStatisticEntity entity = repository.findByDate(today).get();
 
-        return new VaccineStatisticDTO(vaccineStatisticEntity);
+        return new VaccineStatisticDTO(entity);
     }
 
     public List<VaccineStatisticDTO> getStats() {
         List<VaccineStatisticDTO> dtos = new ArrayList<>();
-        vaccineStatisticRepository
+        repository
                 .findAllByOrderByDateAsc()
                 .iterator()
                 .forEachRemaining(e -> {
@@ -91,19 +90,18 @@ public class VaccineStatisticService {
 
         URI uri = URI.create(uriString);
 
-        VaccineRequestDTO vaccineRequestDTO = restTemplate.getForObject(uri, VaccineRequestDTO.class);
-        List<VaccineRequestDataDTO> vaccineRequestData = vaccineRequestDTO.getData();
+        VaccineRequestDTO requestDTO = restTemplate.getForObject(uri, VaccineRequestDTO.class);
+        List<VaccineRequestDataDTO> data = requestDTO.getData();
 
-        List<VaccineStatisticEntity> entities = vaccineRequestData.stream().map(dto -> {
-            VaccineStatisticEntity vaccineStatisticEntity = new VaccineStatisticEntity();
+        List<VaccineStatisticEntity> entities = data.stream().map(dto -> {
+            VaccineStatisticEntity entity = new VaccineStatisticEntity();
 
             LocalDateTime foundDateTime = LocalDateTime.parse(dto.getBaseDate(), dateTimeFormatter);
-            vaccineStatisticEntity.setDate(foundDateTime);
-            vaccineStatisticEntity.setTotalFirstCnt(dto.getTotalFirstCnt());
-            vaccineStatisticEntity.setTotalSecondCnt(dto.getTotalSecondCnt());
-            vaccineStatisticEntity.setExpectedMeetingDate(after.withYear(2099)); // expectedMeetingDate Ridge등 알고리즘으로 변경 TODO
+            entity.setDate(foundDateTime);
+            entity.setTotalFirstCnt(dto.getTotalFirstCnt());
+            entity.setTotalSecondCnt(dto.getTotalSecondCnt());
 
-            return vaccineStatisticEntity;
+            return entity;
         })
         .collect(Collectors.toList());
 
