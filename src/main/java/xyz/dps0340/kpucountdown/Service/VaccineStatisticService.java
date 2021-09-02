@@ -20,6 +20,9 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeFormatterBuilder;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class VaccineStatisticService {
@@ -27,27 +30,56 @@ public class VaccineStatisticService {
     VaccineStatisticRepository vaccineStatisticRepository;
 
 
-    public VaccineStatisticDTO getTodayStats() {
+    public VaccineStatisticDTO getTodayStat() {
         LocalDateTime today = LocalDate.now().atTime(0, 0, 0, 0);
         VaccineStatisticEntity vaccineStatisticEntity = vaccineStatisticRepository.findByDate(today).get();
 
         return new VaccineStatisticDTO(vaccineStatisticEntity);
     }
 
-    public VaccineStatisticEntity crawlTodayStatsFromServer() {
+    public List<VaccineStatisticDTO> getStats() {
+        List<VaccineStatisticDTO> dtos = new ArrayList<>();
+        vaccineStatisticRepository
+                .findAllByOrderByDateAsc()
+                .iterator()
+                .forEachRemaining(e -> {
+                    VaccineStatisticDTO dto = new VaccineStatisticDTO(e);
+                    dtos.add(dto);
+                });
+        return dtos;
+    }
+
+    public List<VaccineStatisticEntity> crawlStatsFromServer() {
+        DateTimeFormatter dateTimeFormatter = new DateTimeFormatterBuilder()
+                .appendPattern("yyyy-MM-dd HH:mm:ss")
+                .toFormatter();
+        LocalDateTime initialDate = LocalDateTime.parse("2018-01-01 00:00:00", dateTimeFormatter);
+
+        return crawlStatsFromServer(initialDate);
+    }
+
+    public VaccineStatisticEntity crawlTodayStatFromServer() {
         LocalDateTime today = LocalDate.now().atTime(0, 0, 0, 0);
+        List<VaccineStatisticEntity> todayStats = crawlStatsFromServer(today);
+        if(todayStats.size() != 1) {
+            throw new IllegalStateException(String.format("Today's stat size must be 1, but it actually %d", todayStats.size()));
+        }
+        return todayStats.get(0);
+    }
+
+    public List<VaccineStatisticEntity> crawlStatsFromServer(LocalDateTime after) {
         DateTimeFormatter dateTimeFormatter = new DateTimeFormatterBuilder()
                                             .appendPattern("yyyy-MM-dd HH:mm:ss")
                                             .toFormatter();
-        String todayString = today.format(dateTimeFormatter);
+        String dateString = after.format(dateTimeFormatter);
 
         RestTemplate restTemplate = new RestTemplate();
 
         String uriString = UriComponentsBuilder
                 .fromUriString(GlobalVariable.OPENAPI_ENDPOINT)
                 .queryParam("page", 1)
-                .queryParam("perPage", 1)
-                .queryParam("cond[baseDate::EQ]", todayString)
+                .queryParam("perPage", 100000)
+                .queryParam("cond[baseDate::GTE]", dateString)
                 .queryParam("cond[sido::EQ]", "전국")
                 .encode()
                 .build()
@@ -56,16 +88,21 @@ public class VaccineStatisticService {
         URI uri = URI.create(uriString);
 
         VaccineRequestDTO vaccineRequestDTO = restTemplate.getForObject(uri, VaccineRequestDTO.class);
-        VaccineRequestDataDTO vaccineRequestDataDTO = vaccineRequestDTO.getData().get(0);
+        List<VaccineRequestDataDTO> vaccineRequestData = vaccineRequestDTO.getData();
 
-        VaccineStatisticEntity vaccineStatisticEntity = new VaccineStatisticEntity();
+        List<VaccineStatisticEntity> entities = vaccineRequestData.stream().map(dto -> {
+            VaccineStatisticEntity vaccineStatisticEntity = new VaccineStatisticEntity();
 
-        LocalDateTime foundDateTime = LocalDateTime.parse(vaccineRequestDataDTO.getBaseDate(), dateTimeFormatter);
-        vaccineStatisticEntity.setDate(foundDateTime);
-        vaccineStatisticEntity.setTotalFirstCnt(vaccineRequestDataDTO.getTotalFirstCnt());
-        vaccineStatisticEntity.setTotalSecondCnt(vaccineRequestDataDTO.getTotalSecondCnt());
-        vaccineStatisticEntity.setExpectedMeetingDate(today.withYear(2099)); // expectedMeetingDate 선형회귀 등 알고리즘으로 변경 TODO
+            LocalDateTime foundDateTime = LocalDateTime.parse(dto.getBaseDate(), dateTimeFormatter);
+            vaccineStatisticEntity.setDate(foundDateTime);
+            vaccineStatisticEntity.setTotalFirstCnt(dto.getTotalFirstCnt());
+            vaccineStatisticEntity.setTotalSecondCnt(dto.getTotalSecondCnt());
+            vaccineStatisticEntity.setExpectedMeetingDate(after.withYear(2099)); // expectedMeetingDate Ridge등 알고리즘으로 변경 TODO
 
-        return vaccineStatisticEntity;
+            return vaccineStatisticEntity;
+        })
+        .collect(Collectors.toList());
+
+        return entities;
     }
 }

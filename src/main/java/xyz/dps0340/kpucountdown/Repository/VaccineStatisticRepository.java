@@ -5,9 +5,10 @@ import xyz.dps0340.kpucountdown.Entity.VaccineStatisticEntity;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 
 public interface VaccineStatisticRepository extends CrudRepository<VaccineStatisticEntity, Long> {
     Optional<VaccineStatisticEntity> findByDate(LocalDateTime date);
-
+    List<VaccineStatisticEntity> findAllByOrderByDateAsc();
 }

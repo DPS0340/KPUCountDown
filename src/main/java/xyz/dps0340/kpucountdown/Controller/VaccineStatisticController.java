@@ -9,6 +9,7 @@ import xyz.dps0340.kpucountdown.DTO.VaccineStatisticDTO;
 import xyz.dps0340.kpucountdown.Service.VaccineStatisticService;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @RestController
 public class VaccineStatisticController {
@@ -16,7 +17,12 @@ public class VaccineStatisticController {
     VaccineStatisticService vaccineStatisticService;
 
     @GetMapping("/stat")
-    public VaccineStatisticDTO getVaccineStats() {
-        return vaccineStatisticService.getTodayStats();
+    public List<VaccineStatisticDTO> getVaccineStats() {
+        return vaccineStatisticService.getStats();
+    }
+
+    @GetMapping("/stat/today")
+    public VaccineStatisticDTO getTodayVaccineStat() {
+        return vaccineStatisticService.getTodayStat();
     }
 }
