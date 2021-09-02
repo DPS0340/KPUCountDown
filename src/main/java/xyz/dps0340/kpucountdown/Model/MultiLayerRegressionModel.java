@@ -19,7 +19,7 @@ import java.util.*;
 import java.util.stream.Stream;
 
 @SuppressWarnings({"DuplicatedCode", "FieldCanBeLocal"})
-public class MultiLayerRegressionModel {
+public class MultiLayerRegressionModel implements DiscreteNeuralNetworkModel<Double> {
     //Number of epochs (full passes of the data)
     private static final int nEpochs = 200;
     //Network learning rate
