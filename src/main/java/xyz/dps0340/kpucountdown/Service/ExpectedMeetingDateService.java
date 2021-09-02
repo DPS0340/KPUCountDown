@@ -23,8 +23,7 @@ public class ExpectedMeetingDateService {
         int length = dates.size();
         if (length == 0) {
             ExpectedMeetingDateDTO calculated = calculateExpectedMeetingDate();
-            ExpectedMeetingDateEntity entity = new ExpectedMeetingDateEntity();
-            entity.setDate(calculated.getDate());
+            ExpectedMeetingDateEntity entity = new ExpectedMeetingDateEntity(calculated);
 
             // Scheduler와의 Race Condition 방지
             length = (int) repository.count();

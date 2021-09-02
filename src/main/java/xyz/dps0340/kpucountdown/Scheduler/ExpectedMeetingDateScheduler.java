@@ -26,9 +26,7 @@ public class ExpectedMeetingDateScheduler {
     @EventListener(ApplicationReadyEvent.class)
     public void cacheExpectedMeetingDate() {
         ExpectedMeetingDateDTO dto = service.calculateExpectedMeetingDate();
-        ExpectedMeetingDateEntity entity = new ExpectedMeetingDateEntity();
-
-        entity.setDate(dto.getDate());
+        ExpectedMeetingDateEntity entity = new ExpectedMeetingDateEntity(dto);
 
         if(repository.count() > 0) {
             repository.deleteAll();
