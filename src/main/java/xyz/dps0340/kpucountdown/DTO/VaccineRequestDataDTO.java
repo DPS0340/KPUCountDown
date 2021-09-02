@@ -12,7 +12,7 @@ import java.time.LocalDate;
 @AllArgsConstructor
 @NoArgsConstructor
 public class VaccineRequestDataDTO {
-    private LocalDate baseDate;
+    private String baseDate;
     private long totalFirstCnt;
     private long totalSecondCnt;
 }

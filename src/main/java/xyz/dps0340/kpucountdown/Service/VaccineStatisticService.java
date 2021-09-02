@@ -59,7 +59,9 @@ public class VaccineStatisticService {
         VaccineRequestDataDTO vaccineRequestDataDTO = vaccineRequestDTO.getData().get(0);
 
         VaccineStatisticEntity vaccineStatisticEntity = new VaccineStatisticEntity();
-        vaccineStatisticEntity.setDate(today);
+
+        LocalDateTime foundDateTime = LocalDateTime.parse(vaccineRequestDataDTO.getBaseDate(), dateTimeFormatter);
+        vaccineStatisticEntity.setDate(foundDateTime);
         vaccineStatisticEntity.setTotalFirstCnt(vaccineRequestDataDTO.getTotalFirstCnt());
         vaccineStatisticEntity.setTotalSecondCnt(vaccineRequestDataDTO.getTotalSecondCnt());
         vaccineStatisticEntity.setExpectedMeetingDate(today.withYear(2099)); // expectedMeetingDate 선형회귀 등 알고리즘으로 변경 TODO
