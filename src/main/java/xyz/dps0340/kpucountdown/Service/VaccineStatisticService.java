@@ -1,6 +1,11 @@
 package xyz.dps0340.kpucountdown.Service;
 
 
+import org.knowm.xchart.BitmapEncoder;
+import org.knowm.xchart.XYChart;
+import org.knowm.xchart.XYChartBuilder;
+import org.knowm.xchart.XYSeries;
+import org.knowm.xchart.style.Styler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -12,10 +17,8 @@ import xyz.dps0340.kpucountdown.Entity.VaccineStatisticEntity;
 import xyz.dps0340.kpucountdown.Repository.VaccineStatisticRepository;
 import xyz.dps0340.kpucountdown.GlobalVariable;
 
-import java.io.UnsupportedEncodingException;
+import java.io.IOException;
 import java.net.URI;
-import java.net.URLDecoder;
-import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -23,6 +26,7 @@ import java.time.format.DateTimeFormatterBuilder;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Service
 public class VaccineStatisticService {
@@ -104,5 +108,40 @@ public class VaccineStatisticService {
         .collect(Collectors.toList());
 
         return entities;
+    }
+
+    public byte[] getVaccineStatsGraph() {
+        List<VaccineStatisticDTO> vaccineStats = getStats();
+        List<Double> firstRatios = vaccineStats
+                .stream()
+                .map(VaccineStatisticDTO::getFirstRatio)
+                .collect(Collectors.toList());
+        List<Double> secondRatios = vaccineStats
+                .stream()
+                .map(VaccineStatisticDTO::getSecondRatio)
+                .collect(Collectors.toList());
+
+        final XYChart chart = new XYChartBuilder()
+                .width(1200).height(800).title("Area Chart").xAxisTitle("Day After").yAxisTitle("Ratio").build();
+
+        chart.getStyler().setLegendPosition(Styler.LegendPosition.InsideNW);
+        chart.getStyler().setDefaultSeriesRenderStyle(XYSeries.XYSeriesRenderStyle.Area);
+
+        if(firstRatios.size() > 0) {
+            chart.addSeries("First Vaccinated", firstRatios.stream().mapToDouble(Double::doubleValue).toArray());
+        }
+        if(secondRatios.size() > 0) {
+            chart.addSeries("Second Vaccinated", secondRatios.stream().mapToDouble(Double::doubleValue).toArray());
+        }
+
+        byte[] result = null;
+
+        try {
+            result = BitmapEncoder.getBitmapBytes(chart, BitmapEncoder.BitmapFormat.PNG);
+        } catch (IOException ignored) {
+
+        }
+
+        return result;
     }
 }
