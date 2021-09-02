@@ -63,12 +63,12 @@ public class MultiLayerRegressionModel implements DiscreteNeuralNetworkModel<Dou
         isTrained = true;
     }
 
-    public List<Double> inference(List<Integer> dots) {
+    public List<Double> inference(List<Integer> inputs) {
         if(!isTrained) {
             throw new IllegalStateException("Network not trained. please train() before inference.");
         }
 
-        final INDArray input = Nd4j.create(dots);
+        final INDArray input = Nd4j.create(inputs);
         INDArray out = network.output(input, false);
 
         List<Double> result = new ArrayList<>();
