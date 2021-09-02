@@ -18,7 +18,6 @@ public class ExpectedMeetingDateScheduler {
     private ExpectedMeetingDateRepository repository;
 
     @Scheduled(cron = "0 0 12 * * 0")
-    @EventListener(ApplicationReadyEvent.class)
     public void cacheExpectedMeetingDate() {
         ExpectedMeetingDateDTO dto = service.calculateExpectedMeetingDate();
         ExpectedMeetingDateEntity entity = new ExpectedMeetingDateEntity(dto);

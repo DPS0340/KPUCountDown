@@ -13,6 +13,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Service
 public class ExpectService {
@@ -51,30 +52,29 @@ public class ExpectService {
         return result;
     }
 
-    private InferenceDTO inference() {
-        long count = vaccineStatisticService.getStatsCount();
+    private InferenceDTO inference(int count) {
 
-        int idx = (int) count;
+        int idx = count;
         double ratio = 0.0;
         List<Double> expectations = new ArrayList<>();
 
+        List<Double> xs = new ArrayList<>();
+
+
         while(ratio < 70.0) {
-            idx += 1;
+            xs.clear();
+            Stream.iterate(idx + 1, n -> n + 1)
+                    .limit(100)
+                    .map(e -> (double)e)
+                    .forEach(xs::add);
 
-            ArrayList<Integer> x = new ArrayList<>();
-            x.add(idx);
-
-            List<Double> y = multiLayerRegressionModel.inference(x);
-
-            if(y.size() != 1) {
-                throw new IllegalStateException(String.format("Expectation's list size must be 1, but it actually %d", y.size()));
-            }
-
-            ratio = y.get(0);
-            expectations.add(ratio);
+            idx += 100;
+            List<Double> y = multiLayerRegressionModel.inference(xs);
+            ratio = y.get(y.size()-1);
+            expectations.addAll(y);
         }
 
-        return new InferenceDTO(idx, (int) count, expectations);
+        return new InferenceDTO(idx, count, expectations);
     }
 
     public ExpectedMeetingDateDTO calculateExpectedMeetingDate() {
@@ -87,10 +87,11 @@ public class ExpectService {
             multiLayerRegressionModel.train(firstRatios, MultiLayerRegressionModel.DEFAULT_BATCH_SIZE);
         }
 
-        InferenceDTO inferenceDTO = inference();
+        int count = (int) vaccineStatisticService.getStatsCount();
+        InferenceDTO inferenceDTO = inference(count);
 
         int idx = inferenceDTO.getIdx();
-        int count = inferenceDTO.getCount();
+        count = inferenceDTO.getCount();
 
         LocalDateTime today = vaccineStatisticService.getTodayStat().getDate();
         LocalDateTime expectedDate = today.plusDays(idx - count);
@@ -100,14 +101,15 @@ public class ExpectService {
         return result;
     }
 
-    public byte[] getExpectedGraph() {
+    public byte[] getExpectedGraph(int count) {
         List<Double> firstRatios = vaccineStatisticService
                 .getStats()
                 .stream()
                 .map(VaccineStatisticDTO::getFirstRatio)
+                .limit(count)
                 .collect(Collectors.toList());
 
-        InferenceDTO inferenceDTO = inference();
+        InferenceDTO inferenceDTO = inference(count);
         List<Double> expectations = inferenceDTO.getExpectations();
         firstRatios.addAll(expectations);
 
@@ -118,5 +120,10 @@ public class ExpectService {
         labels.add("First Vaccinated (including inference)");
 
         return vaccineStatisticService.drawGraph(lists, labels);
+    }
+
+    public byte[] getExpectedGraph() {
+        int count = (int) vaccineStatisticService.getStatsCount();
+        return getExpectedGraph(count);
     }
 }

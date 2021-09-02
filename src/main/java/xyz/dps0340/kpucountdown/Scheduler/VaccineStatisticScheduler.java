@@ -17,9 +17,10 @@ public class VaccineStatisticScheduler {
     private VaccineStatisticService service;
     @Autowired
     private VaccineStatisticRepository repository;
+    @Autowired
+    private ExpectedMeetingDateScheduler expectedMeetingDateScheduler;
 
     @Scheduled(cron = "0 0 11 * * 0")
-    @EventListener(ApplicationReadyEvent.class)
     public void crawlTodayStatistic() {
         VaccineStatisticEntity entity = service.crawlTodayStatFromServer();
         if(repository.findByDate(entity.getDate()).isPresent()) {
@@ -29,6 +30,12 @@ public class VaccineStatisticScheduler {
     }
 
     @EventListener(ApplicationReadyEvent.class)
+    public void doJobs() {
+        crawlHistoryStatistic();
+        expectedMeetingDateScheduler.cacheExpectedMeetingDate();
+    }
+
+
     public void crawlHistoryStatistic() {
         List<VaccineStatisticEntity> entities = service.crawlStatsFromServer();
         entities

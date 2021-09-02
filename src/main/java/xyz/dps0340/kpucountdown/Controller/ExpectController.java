@@ -27,4 +27,12 @@ public class ExpectController {
     public byte[] getExpectedMeetingDateGraph() {
         return service.getExpectedGraph();
     }
+
+    @GetMapping(
+            value = "/graph/expect/raw",
+            produces = MediaType.IMAGE_PNG_VALUE
+    )
+    public byte[] getRawExpectedMeetingDateGraph() {
+        return service.getExpectedGraph(0);
+    }
 }
