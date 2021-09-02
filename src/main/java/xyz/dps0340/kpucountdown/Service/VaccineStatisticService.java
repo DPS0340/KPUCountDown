@@ -53,7 +53,6 @@ public class VaccineStatisticService {
                 .build()
                 .toUriString() + String.format("&serviceKey=%s", GlobalVariable.VACCINE_OPENAPI_SERVICE_KEY);
 
-        System.out.println(uriString);
         URI uri = URI.create(uriString);
 
         VaccineRequestDTO vaccineRequestDTO = restTemplate.getForObject(uri, VaccineRequestDTO.class);
