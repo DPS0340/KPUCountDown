@@ -17,7 +17,7 @@ import java.util.stream.Stream;
 @RestController
 public class VaccineStatisticController {
     @Autowired
-    VaccineStatisticService vaccineStatisticService;
+    private VaccineStatisticService vaccineStatisticService;
 
     @GetMapping("/stat")
     public List<VaccineStatisticDTO> getVaccineStats() {

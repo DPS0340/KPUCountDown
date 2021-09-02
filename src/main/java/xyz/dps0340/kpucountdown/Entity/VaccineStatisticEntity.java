@@ -25,6 +25,5 @@ public class VaccineStatisticEntity {
     private LocalDateTime date;
     private Long totalFirstCnt;
     private Long totalSecondCnt;
-    private LocalDateTime expectedMeetingDate;
 
 }

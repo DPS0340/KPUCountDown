@@ -14,9 +14,9 @@ import java.util.List;
 @Component
 public class VaccineStatisticScheduler {
     @Autowired
-    VaccineStatisticService vaccineStatisticService;
+    private VaccineStatisticService vaccineStatisticService;
     @Autowired
-    VaccineStatisticRepository vaccineStatisticRepository;
+    private VaccineStatisticRepository vaccineStatisticRepository;
 
     @Scheduled(cron = "0 0 11 * * 0")
     @EventListener(ApplicationReadyEvent.class)

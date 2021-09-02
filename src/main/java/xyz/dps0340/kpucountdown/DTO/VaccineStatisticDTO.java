@@ -14,7 +14,6 @@ public class VaccineStatisticDTO {
     private LocalDateTime date;
     private Long totalFirstCnt;
     private Long totalSecondCnt;
-    private LocalDateTime expectedMeetingDate;
     private Double firstRatio;
     private Double secondRatio;
 
@@ -22,7 +21,6 @@ public class VaccineStatisticDTO {
         this.date = entity.getDate();
         this.totalFirstCnt = entity.getTotalFirstCnt();
         this.totalSecondCnt = entity.getTotalSecondCnt();
-        this.expectedMeetingDate = entity.getExpectedMeetingDate();
         this.firstRatio = 100.0 * this.totalFirstCnt / GlobalVariable.NATIONAL_POPULATION;
         this.secondRatio = 100.0 * this.totalSecondCnt / GlobalVariable.NATIONAL_POPULATION;
     }
