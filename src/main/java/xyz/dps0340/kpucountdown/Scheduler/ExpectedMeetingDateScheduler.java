@@ -7,18 +7,13 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import xyz.dps0340.kpucountdown.DTO.ExpectedMeetingDateDTO;
 import xyz.dps0340.kpucountdown.Entity.ExpectedMeetingDateEntity;
-import xyz.dps0340.kpucountdown.Entity.VaccineStatisticEntity;
 import xyz.dps0340.kpucountdown.Repository.ExpectedMeetingDateRepository;
-import xyz.dps0340.kpucountdown.Repository.VaccineStatisticRepository;
-import xyz.dps0340.kpucountdown.Service.ExpectedMeetingDateService;
-import xyz.dps0340.kpucountdown.Service.VaccineStatisticService;
-
-import java.util.List;
+import xyz.dps0340.kpucountdown.Service.ExpectService;
 
 @Component
 public class ExpectedMeetingDateScheduler {
     @Autowired
-    private ExpectedMeetingDateService service;
+    private ExpectService service;
     @Autowired
     private ExpectedMeetingDateRepository repository;
 
