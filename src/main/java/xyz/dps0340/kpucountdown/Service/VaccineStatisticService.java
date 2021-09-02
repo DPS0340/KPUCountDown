@@ -12,6 +12,10 @@ import xyz.dps0340.kpucountdown.Entity.VaccineStatisticEntity;
 import xyz.dps0340.kpucountdown.Repository.VaccineStatisticRepository;
 import xyz.dps0340.kpucountdown.GlobalVariable;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URI;
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -41,16 +45,18 @@ public class VaccineStatisticService {
 
         String uriString = UriComponentsBuilder
                 .fromUriString(GlobalVariable.OPENAPI_ENDPOINT)
-                .queryParam("serviceKey", GlobalVariable.OPENAPI_SERVICE_KEY)
                 .queryParam("page", 1)
                 .queryParam("perPage", 1)
                 .queryParam("cond[baseDate::EQ]", todayString)
                 .queryParam("cond[sido::EQ]", "전국")
                 .encode()
                 .build()
-                .toUriString();
+                .toUriString() + String.format("&serviceKey=%s", GlobalVariable.VACCINE_OPENAPI_SERVICE_KEY);
 
-        VaccineRequestDTO vaccineRequestDTO = restTemplate.getForObject(uriString, VaccineRequestDTO.class);
+        System.out.println(uriString);
+        URI uri = URI.create(uriString);
+
+        VaccineRequestDTO vaccineRequestDTO = restTemplate.getForObject(uri, VaccineRequestDTO.class);
         VaccineRequestDataDTO vaccineRequestDataDTO = vaccineRequestDTO.getData().get(0);
 
         VaccineStatisticEntity vaccineStatisticEntity = new VaccineStatisticEntity();
