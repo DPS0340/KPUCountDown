@@ -14,6 +14,7 @@ import xyz.dps0340.kpucountdown.DTO.VaccineRequestDTO;
 import xyz.dps0340.kpucountdown.DTO.VaccineRequestDataDTO;
 import xyz.dps0340.kpucountdown.DTO.VaccineStatisticDTO;
 import xyz.dps0340.kpucountdown.Entity.VaccineStatisticEntity;
+import xyz.dps0340.kpucountdown.Formatter.CustomDateTimeFormatter;
 import xyz.dps0340.kpucountdown.Repository.VaccineStatisticRepository;
 import xyz.dps0340.kpucountdown.GlobalVariable;
 
@@ -53,9 +54,7 @@ public class VaccineStatisticService {
     }
 
     public List<VaccineStatisticEntity> crawlStatsFromServer() {
-        DateTimeFormatter dateTimeFormatter = new DateTimeFormatterBuilder()
-                .appendPattern("yyyy-MM-dd HH:mm:ss")
-                .toFormatter();
+        DateTimeFormatter dateTimeFormatter = CustomDateTimeFormatter.koreanFormatter;
         LocalDateTime initialDate = LocalDateTime.parse("2018-01-01 00:00:00", dateTimeFormatter);
 
         return crawlStatsFromServer(initialDate);
@@ -71,9 +70,7 @@ public class VaccineStatisticService {
     }
 
     public List<VaccineStatisticEntity> crawlStatsFromServer(LocalDateTime after) {
-        DateTimeFormatter dateTimeFormatter = new DateTimeFormatterBuilder()
-                                            .appendPattern("yyyy-MM-dd HH:mm:ss")
-                                            .toFormatter();
+        DateTimeFormatter dateTimeFormatter = CustomDateTimeFormatter.koreanFormatter;
         String dateString = after.format(dateTimeFormatter);
 
         RestTemplate restTemplate = new RestTemplate();
