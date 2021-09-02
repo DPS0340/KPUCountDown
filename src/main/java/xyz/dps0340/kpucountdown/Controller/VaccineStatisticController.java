@@ -31,7 +31,7 @@ public class VaccineStatisticController {
 
     @GetMapping(
             value = "/graph",
-            produces = MediaType.IMAGE_JPEG_VALUE
+            produces = MediaType.IMAGE_PNG_VALUE
     )
     public byte[] getVaccineStatsGraph() {
         return vaccineStatisticService.getVaccineStatsGraph();
