@@ -21,11 +21,12 @@ import java.util.stream.Stream;
 @SuppressWarnings({"DuplicatedCode", "FieldCanBeLocal"})
 public class MultiLayerRegressionModel {
     //Number of epochs (full passes of the data)
-    public static final int nEpochs = 200;
+    private static final int nEpochs = 200;
     //Network learning rate
-    public static final double learningRate = 0.01;
-    MultiLayerNetwork network = null;
-    boolean isTrained = false;
+    private static final double learningRate = 0.01;
+    private MultiLayerNetwork network = null;
+    private boolean isTrained = false;
+    public static final int DEFAULT_BATCH_SIZE = 50;
 
     public void initializeNeuralNetwork() {
         int numInput = 1;
@@ -91,5 +92,25 @@ public class MultiLayerRegressionModel {
 
         return new ListDataSetIterator<>(listDs, batchSize);
 
+    }
+
+    public static int getnEpochs() {
+        return nEpochs;
+    }
+
+    public static double getLearningRate() {
+        return learningRate;
+    }
+
+    public MultiLayerNetwork getNetwork() {
+        return network;
+    }
+
+    public boolean isInitialized() {
+        return network != null;
+    }
+
+    public boolean isTrained() {
+        return isTrained;
     }
 }
