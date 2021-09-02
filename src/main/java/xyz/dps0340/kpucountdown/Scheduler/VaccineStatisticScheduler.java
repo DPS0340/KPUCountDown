@@ -24,7 +24,7 @@ public class VaccineStatisticScheduler {
     @EventListener(ApplicationReadyEvent.class)
     public void crawlStatistic() {
         VaccineStatisticEntity vaccineStatisticEntity = vaccineStatisticService.crawlTodayStatsFromServer();
-        if(vaccineStatisticRepository.findByDate(vaccineStatisticEntity.getDate()).isEmpty()) {
+        if(vaccineStatisticRepository.findByDate(vaccineStatisticEntity.getDate()).isPresent()) {
             return;
         }
         vaccineStatisticRepository.save(vaccineStatisticEntity);
