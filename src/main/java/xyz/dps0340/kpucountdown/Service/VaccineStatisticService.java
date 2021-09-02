@@ -53,6 +53,10 @@ public class VaccineStatisticService {
         return dtos;
     }
 
+    public long getStatsCount() {
+        return repository.count();
+    }
+
     public List<VaccineStatisticEntity> crawlStatsFromServer() {
         DateTimeFormatter dateTimeFormatter = CustomDateTimeFormatter.koreanFormatter;
         LocalDateTime initialDate = LocalDateTime.parse("2018-01-01 00:00:00", dateTimeFormatter);
@@ -116,17 +120,30 @@ public class VaccineStatisticService {
                 .map(VaccineStatisticDTO::getSecondRatio)
                 .collect(Collectors.toList());
 
+        List<List<Double>> lists = new ArrayList<>();
+        lists.add(firstRatios);
+        lists.add(secondRatios);
+
+        List<String> labels = new ArrayList<>();
+        labels.add("First Vaccinated");
+        labels.add("Second Vaccinated");
+
+        return drawGraph(lists, labels);
+    }
+
+    public byte[] drawGraph(List<List<Double>> lists, List<String> labels) {
         final XYChart chart = new XYChartBuilder()
                 .width(1200).height(800).title("Area Chart").xAxisTitle("Day After").yAxisTitle("Ratio").build();
 
         chart.getStyler().setLegendPosition(Styler.LegendPosition.InsideNW);
         chart.getStyler().setDefaultSeriesRenderStyle(XYSeries.XYSeriesRenderStyle.Area);
 
-        if(firstRatios.size() > 0) {
-            chart.addSeries("First Vaccinated", firstRatios.stream().mapToDouble(Double::doubleValue).toArray());
-        }
-        if(secondRatios.size() > 0) {
-            chart.addSeries("Second Vaccinated", secondRatios.stream().mapToDouble(Double::doubleValue).toArray());
+        for(int i=0;i<Math.min(lists.size(), labels.size()); i++) {
+            List<Double> list = lists.get(i);
+            String label = labels.get(i);
+            if(!list.isEmpty()) {
+                chart.addSeries(label, list.stream().mapToDouble(Double::doubleValue).toArray());
+            }
         }
 
         byte[] result = null;
