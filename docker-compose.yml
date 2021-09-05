@@ -10,7 +10,7 @@ services:
     command: --interval 30
   backend:
     restart: always
-    image: a891/kpucountdown_backend:master
+    image: a891/kpucountdown_backend
     networks:
       - app-tier
     ports:
