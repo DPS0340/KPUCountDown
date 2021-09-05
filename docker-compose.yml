@@ -1,6 +1,13 @@
 version: "3.3"
 
 services:
+  watchtower:
+    container_name: cleanerbot-watchtower
+    image: containrrr/watchtower
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - /etc/docker:/etc/docker
+    command: --interval 30
   backend:
     restart: always
     image: a891/kpucountdown_backend:master
