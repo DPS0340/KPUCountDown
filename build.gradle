@@ -29,6 +29,7 @@ dependencies {
     implementation 'org.deeplearning4j:deeplearning4j-core:1.0.0-M1.1'
     implementation 'org.nd4j:nd4j-common:1.0.0-M1.1'
     implementation 'org.nd4j:nd4j-native-platform:1.0.0-M1.1'
+    implementation 'io.springfox:springfox-boot-starter:3.0.0'
 }
 
 test {
