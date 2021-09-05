@@ -4,11 +4,7 @@
 
 코로나19 백신 접종 현황 / 산기대 대면 예상일을 확인할 수 있는 API
 
-## Demo
-
-[URL](http://13.125.8.153:8080)
-
-## API Docs
+## Demo / API Docs
 
 [Swagger](http://13.125.8.153:8080/swagger-ui/)
 
