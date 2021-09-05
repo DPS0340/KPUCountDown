@@ -27,9 +27,9 @@ import java.util.stream.Stream;
 @SuppressWarnings({"DuplicatedCode", "FieldCanBeLocal"})
 public class MultiLayerRegressionModel implements NeuralNetworkModel<Double, Double> {
     //Number of epochs (full passes of the data)
-    private static final int nEpochs = 200;
+    private static final int nEpochs = 500;
     //Network learning rate
-    private static final double learningRate = 0.001;
+    private static final double learningRate = 0.0005;
     private MultiLayerNetwork network = null;
     private boolean isTrained = false;
     public static final int DEFAULT_BATCH_SIZE = 50;
