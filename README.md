@@ -33,3 +33,10 @@ Swagger (TODO)
 
 ### Evaluation Summary
 
+![expectation](https://user-images.githubusercontent.com/32592965/132117091-6a813d15-7c98-4590-841d-d0e3b5c2eef0.png)
+
+기존 데이터와 통합한 추론 그래프
+
+![raw expectation](https://user-images.githubusercontent.com/32592965/132117093-ec21032c-cdb9-4759-95fb-e1d1fc42ef8e.png)
+
+학습된 Raw 추론 그래프
