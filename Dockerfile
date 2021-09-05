@@ -1,15 +1,12 @@
-FROM openjdk:14-jdk-alpine
-
-RUN addgroup -S spring && adduser -S spring -G spring
-USER spring:spring
+FROM adoptopenjdk/openjdk14
 
 WORKDIR /code
 COPY . .
 
 RUN ./gradlew bootJar
 
-ARG JAR_FILE=target/*.jar
+ARG JAR_FILE=/code/build/libs/*
 
-COPY ${JAR_FILE} app.jar
+RUN cp ${JAR_FILE} /code/app.jar
 
-ENTRYPOINT ["java", "-jar", "/app.jar"]
+ENTRYPOINT ["java", "-jar", "/code/app.jar"]
