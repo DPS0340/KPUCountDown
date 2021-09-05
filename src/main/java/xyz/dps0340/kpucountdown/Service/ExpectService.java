@@ -56,19 +56,20 @@ public class ExpectService {
 
         int idx = count;
         double ratio = 0.0;
+        int batchSize = 100;
         List<Double> expectations = new ArrayList<>();
 
         List<Double> xs = new ArrayList<>();
 
 
-        while(ratio < 70.0) {
+        while(ratio < 70.0 && idx <= 300) {
             xs.clear();
             Stream.iterate(idx + 1, n -> n + 1)
-                    .limit(100)
+                    .limit(batchSize)
                     .map(e -> (double)e)
                     .forEach(xs::add);
 
-            idx += 100;
+            idx += batchSize;
             List<Double> y = multiLayerRegressionModel.inference(xs);
             ratio = y.get(y.size()-1);
             expectations.addAll(y);
