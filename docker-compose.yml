@@ -1,0 +1,16 @@
+version: "3.3"
+
+services:
+  backend:
+    restart: always
+    image: a891/kpucountdown_backend:master
+    networks:
+      - app-tier
+    ports:
+      - 8080:8080
+    environment:
+      - VACCINE_OPENAPI_SERVICE_KEY=${VACCINE_OPENAPI_SERVICE_KEY}
+
+networks:
+  app-tier:
+    driver: bridge
