@@ -4,9 +4,13 @@
 
 백신 접종으로 인한 산기대 대면까지 남은 기간을 확인할 수 있는 API
 
+## Demo
+
+http://13.125.8.153:8080
+
 ## API Docs
 
-Swagger (TODO)
+[Swagger](http://13.125.8.153:8080/swagger-ui/)
 
 ## Tech Stacks
 
