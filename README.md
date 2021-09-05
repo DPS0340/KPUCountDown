@@ -17,7 +17,9 @@ http://13.125.8.153:8080
 * Spring Boot
 * Spring MVC
 * Spring Data JPA
+* H2 Database
 * Deeplearning4j
+* Docker / Docker Compose
 
 ## Inference
 
