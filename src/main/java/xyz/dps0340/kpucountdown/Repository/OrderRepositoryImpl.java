@@ -16,7 +16,7 @@ public class OrderRepositoryImpl implements OrderRepositoryCustom {
     public List<OrderEntity> getAll() {
         return jpaQueryFactory
                 .selectFrom(QOrderEntity.orderEntity)
-                .innerJoin(QOrderEntity.orderEntity.orderItems, QOrderItemEntity.orderItemEntity)
+                .leftJoin(QOrderEntity.orderEntity.orderItems, QOrderItemEntity.orderItemEntity)
                 .fetchJoin()
                 .fetch();
     }
