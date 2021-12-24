@@ -29,7 +29,7 @@ public class VaccineStatisticScheduler {
         repository.save(entity);
     }
 
-    @EventListener(ApplicationReadyEvent.class)
+//    @EventListener(ApplicationReadyEvent.class)
     public void doJobs() {
         crawlHistoryStatistic();
         expectedMeetingDateScheduler.cacheExpectedMeetingDate();
